@@ -95,6 +95,10 @@ function showUsage(): void {
   console.log('  • Twitter/X username');
   console.log('  • LinkedIn company page');
   console.log(`  • Domains (${DOMAIN_EXTENSIONS.join(', ')})\n`);
+  console.log(chalk.bold('MCP Server (for AI agents):'));
+  console.log('  maybethisone-mcp\n');
+  console.log('  Add to Claude Desktop config:');
+  console.log('  { "mcpServers": { "maybethisone": { "command": "npx", "args": ["maybethisone-mcp"] } } }\n');
 }
 
 function isValidName(name: string): boolean {
