@@ -1,6 +1,6 @@
 # maybethisone
 
-A CLI tool to check name availability across multiple platforms - GitHub, npm, Twitter/X, LinkedIn, and domains.
+A CLI tool and MCP server to check name availability across multiple platforms - GitHub, npm, Twitter/X, LinkedIn, and domains.
 
 ## Installation
 
@@ -73,11 +73,64 @@ Results for: myproject
 | `~ No DNS`    | No DNS record found (domain may still be registered - verify manually) |
 | `? Error`     | Check failed                                                           |
 
+## MCP Server (for AI Agents)
+
+maybethisone includes an MCP (Model Context Protocol) server that allows AI agents like Claude to check name availability.
+
+### Tools Available
+
+| Tool                         | Description                                                    |
+| ---------------------------- | -------------------------------------------------------------- |
+| `check_name_availability`    | Full check - all platforms including social media (uses browser) |
+| `check_name_availability_quick` | Quick check - GitHub, npm package, and .com domain only (no browser) |
+
+### Claude Desktop Configuration
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "maybethisone": {
+      "command": "npx",
+      "args": ["maybethisone-mcp"]
+    }
+  }
+}
+```
+
+Or if installed locally:
+
+```json
+{
+  "mcpServers": {
+    "maybethisone": {
+      "command": "node",
+      "args": ["/path/to/maybethisone/dist/mcp.js"]
+    }
+  }
+}
+```
+
+### Example Response
+
+```json
+{
+  "name": "myproject",
+  "results": [
+    { "resource": "github.com/orgs/myproject", "status": "available" },
+    { "resource": "npm package: myproject", "status": "taken" },
+    { "resource": "myproject.com", "status": "taken" }
+  ]
+}
+```
+
 ## Project Structure
 
 ```
 src/
-├── index.ts              # Main entry point
+├── index.ts              # CLI entry point
+├── mcp.ts                # MCP server entry point
 ├── types.ts              # TypeScript type definitions
 ├── checkers/
 │   ├── index.ts          # Re-exports all checkers

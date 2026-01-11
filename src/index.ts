@@ -31,40 +31,38 @@ function formatStatus(result: ResourceResult): string {
 }
 
 async function checkAllForName(name: string): Promise<ResourceResult[]> {
-  const results: ResourceResult[] = [];
+  logProgress('Checking all platforms...');
 
-  logProgress('Checking GitHub organization...');
-  const githubResult = await checkGitHubOrg(name);
-  results.push({ resource: `github.com/orgs/${name}`, ...githubResult });
-
-  logProgress('Checking npm package...');
-  const npmPkgResult = await checkNpmPackage(name);
-  results.push({ resource: `npm package: ${name}`, ...npmPkgResult });
-
-  logProgress('Checking npm org (loading browser)...');
-  const npmOrgResult = await checkNpmOrg(name);
-  results.push({ resource: `npm org: @${name}`, ...npmOrgResult });
-
-  logProgress('Checking Twitter/X...');
-  const twitterResult = await checkTwitter(name);
-  results.push({ resource: `x.com/${name}`, ...twitterResult });
-
-  logProgress('Checking LinkedIn...');
-  const linkedinResult = await checkLinkedIn(name);
-  results.push({ resource: `linkedin.com/company/${name}`, ...linkedinResult });
-
-  // Check domains in parallel
-  logProgress('Checking domains...');
-  const domainResults = await Promise.all(
-    DOMAIN_EXTENSIONS.map(async (ext) => {
-      const result = await checkDomain(name, ext);
-      return { resource: `${name}${ext}`, ...result };
-    })
-  );
-  results.push(...domainResults);
+  // Run all checks in parallel for speed
+  const [
+    githubResult,
+    npmPkgResult,
+    npmOrgResult,
+    twitterResult,
+    linkedinResult,
+    ...domainResults
+  ] = await Promise.all([
+    checkGitHubOrg(name),
+    checkNpmPackage(name),
+    checkNpmOrg(name),
+    checkTwitter(name),
+    checkLinkedIn(name),
+    ...DOMAIN_EXTENSIONS.map((ext) => checkDomain(name, ext))
+  ]);
 
   clearProgress();
-  return results;
+
+  return [
+    { resource: `github.com/orgs/${name}`, ...githubResult },
+    { resource: `npm package: ${name}`, ...npmPkgResult },
+    { resource: `npm org: @${name}`, ...npmOrgResult },
+    { resource: `x.com/${name}`, ...twitterResult },
+    { resource: `linkedin.com/company/${name}`, ...linkedinResult },
+    ...DOMAIN_EXTENSIONS.map((ext, i) => ({
+      resource: `${name}${ext}`,
+      ...domainResults[i]
+    }))
+  ];
 }
 
 function displayResults(name: string, results: ResourceResult[]): void {

@@ -1,11 +1,12 @@
 {
   "name": "maybethisone",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Check availability of GitHub orgs, npm packages, social media handles, and domains",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "maybethisone": "dist/index.js"
+    "maybethisone": "dist/index.js",
+    "maybethisone-mcp": "dist/mcp.js"
   },
   "files": [
     "dist"
@@ -13,7 +14,8 @@
   "scripts": {
     "search": "bun run src/index.ts",
     "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node --format esm --external playwright --external chalk --external cli-table3",
+    "mcp": "bun run src/mcp.ts",
+    "build": "bun build src/index.ts src/mcp.ts --outdir dist --target node --format esm --external playwright --external chalk --external cli-table3 --external @modelcontextprotocol/sdk --external zod",
     "clean": "rm -rf dist",
     "prebuild": "bun run clean",
     "prepublishOnly": "bun run build",
@@ -37,14 +39,18 @@
     "twitter",
     "linkedin",
     "cli",
+    "mcp",
+    "model-context-protocol",
     "maybethisone"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
-    "playwright": "^1.57.0"
+    "playwright": "^1.57.0",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@types/bun": "latest",
