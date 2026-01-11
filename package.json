@@ -1,6 +1,6 @@
 {
   "name": "maybethisone",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Check availability of GitHub orgs, npm packages, social media handles, and domains",
   "type": "module",
   "main": "dist/index.js",

@@ -138,6 +138,7 @@ async function main(): Promise<void> {
   }
 
   await closeBrowser();
+  process.exit(0);
 }
 
 main().catch(async (err) => {
